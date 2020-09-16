@@ -31,6 +31,8 @@ cd linux-v5.0-rc1
 make x86_64_defconfig
 ```
 
+Note that linux-5.0-rc1 is vulnerable to [Null Pointer Dereference exploit][1]. 
+
 2. Prepare Debian Image for QEMU VM
 
 ```
@@ -40,7 +42,7 @@ sudo rm -rf chroot
 ```
 We create Debian Wheezy image by default as it can directly work well with defconfig.
 
-If you want to create Debian Stretch image or higher with `create-image.sh`, the following configuration is required:
+If you want to create Debian Stretch image or higher with `[create-image.sh][2]`, the following configuration is required:
 
 ```
 # Required for Debian Stretch
@@ -63,7 +65,7 @@ cp .ssh/authorized_keys /home/drill/.ssh/authorized_keys
 chown drill:drill /home/drill/.ssh /home/drill/.ssh/authorized_keys
 ```
 
-3. Copy exploits into QEMU VM at Terminal 2
+3. Copy exploits and scripts into QEMU VM at Terminal 2
 
 ```
 make
@@ -87,7 +89,7 @@ The execution result is as below:
 [   41.449360] drill: start hacking
 ```
 
-5. Execute the exploits at Terminal 2
+5. Execute exploits at Terminal 2
 
 ```
 ./connect_vm
@@ -100,3 +102,4 @@ drill@syzkaller:~$./drill_exploit_nullderef
 ## References
 
 [1]: https://bugs.chromium.org/p/project-zero/issues/detail?id=1792&desc=2
+[2]: https://github.com/google/syzkaller/blob/master/tools/create-image.sh
