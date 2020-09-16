@@ -24,6 +24,13 @@ cd linux
 make x86_64_defconfig
 ```
 
+```
+wget https://github.com/torvalds/linux/archive/v5.0-rc1.tar.gz
+tar -xvf v5.0-rc1.tar.gz
+cd linux-v5.0-rc1
+make x86_64_defconfig
+```
+
 2. Prepare Debian Image for QEMU VM
 
 ```
