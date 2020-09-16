@@ -28,34 +28,47 @@ make x86_64_defconfig
 
 ```
 cd image
-./create_image.sh -d wheezy
+./create_wheezy.sh
 sudo rm -rf chroot
+```
+We create Debian Wheezy image by default as it can directly work well with defconfig.
+
+If you want to create Debian Stretch image or higher with `create-image.sh`, the following configuration is required:
+
+```
+# Required for Debian Stretch
+CONFIG_CONFIGFS_FS=y
+CONFIG_SECURITYFS=y
 ```
 
 3. Start QEMU VM at Terminal 1
 
 ```
 ./startvm
+```
+
+Enter `root` and empty password to log in, then
+
+```
 useradd -m -s /bin/bash drill
+mkdir -p /home/drill/.ssh/
 cp .ssh/authorized_keys /home/drill/.ssh/authorized_keys
-chmod drill:drill .ssh/authorized_keys
+chown drill:drill /home/drill/.ssh /home/drill/.ssh/authorized_keys
 ```
 
 3. Copy exploits into QEMU VM at Terminal 2
 
 ```
 make
-./scptovm prep_usr.sh
+./scptovm prep_usr
 ./scptovm drill_operations drill_trigger_crash drill_exploit_uaf drill_exploit_nullderef 
 ```
 
 4. Remount `/sys/kernel/debug` at Terminal 1
 
-Enter `root` and empty password to log in, then
-
 ```
-mv /home/drill/prep_usr.sh .
-./prep_usr.sh
+mv /home/drill/prep_usr .
+./prep_usr
 ```
 
 The execution result is as below:
