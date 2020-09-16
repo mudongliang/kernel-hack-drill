@@ -19,8 +19,7 @@ Have fun!
 ```
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.8.9.tar.xz
 tar -xvf linux-5.8.9.tar.xz
-mv linux-5.8.9 linux
-cd linux
+cd linux-5.8.9
 make x86_64_defconfig
 ```
 
@@ -50,13 +49,14 @@ CONFIG_CONFIGFS_FS=y
 CONFIG_SECURITYFS=y
 ```
 
-3. Start QEMU VM at Terminal 1
+3. Start QEMU VM and do some configuration at Terminal 1
 
 ```
+ln -s linux-5.8.9 linux
 ./startvm
 ```
 
-Enter `root` and empty password to log in, then
+Create soft link with the target Linux kernel, enter `root` and empty password to log in, and then
 
 ```
 useradd -m -s /bin/bash drill
