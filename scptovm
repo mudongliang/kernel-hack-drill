@@ -12,4 +12,4 @@ fi;
 
 port_num=$(cat .port);
 
-cp -r -i ${IMAGE}/${IMG_NAME}.id_rsa -P $port_num -o "StrictHostKeyChecking no" $@ drill@localhost:/home/drill/
+scp -r -i ${IMAGE}/${IMG_NAME}.id_rsa -P $port_num -o "StrictHostKeyChecking no" $@ drill@localhost:/home/drill/

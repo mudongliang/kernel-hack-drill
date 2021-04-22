@@ -17,20 +17,15 @@ Have fun!
 1. Compile Linux Kernel
 
 ```
-wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.8.9.tar.xz
-tar -xvf linux-5.8.9.tar.xz
-cd linux-5.8.9
-make x86_64_defconfig
-```
-
-```
 wget https://github.com/torvalds/linux/archive/v5.0-rc1.tar.gz
 tar -xvf v5.0-rc1.tar.gz
 cd linux-v5.0-rc1
 make x86_64_defconfig
+make -j32 CC=gcc-8
 ```
 
-Note that linux-5.0-rc1 is vulnerable to [Null Pointer Dereference exploit][1]. 
+Note that linux-5.0-rc1 is vulnerable to [Null Pointer Dereference exploit][1]. When compiling linux-5.0-rc1 with gcc-9, it will report [error: ' mindirect branch' and ' fcf protection' are not compatible
+](https://mudongliang.github.io/2021/04/09/error-mindirect-branch-and-fcf-protection-are-not-compatible.html)
 
 2. Prepare Debian Image for QEMU VM
 
@@ -41,7 +36,7 @@ sudo rm -rf chroot
 ```
 We create Debian Wheezy image by default as it can directly work well with defconfig.
 
-If you want to create Debian Stretch image or higher with `[create-image.sh][2]`, the following configuration is required:
+If you want to create Debian Stretch image or higher with [create-image.sh][2], the following configuration is required:
 
 ```
 # Required for Debian Stretch
@@ -49,14 +44,20 @@ CONFIG_CONFIGFS_FS=y
 CONFIG_SECURITYFS=y
 ```
 
-3. Start QEMU VM and do some configuration at Terminal 1
+3. Compiling the vulnerable module
 
 ```
-ln -s linux-5.8.9 linux
+make
+```
+
+4. Start QEMU VM and do some configuration at Terminal 1
+
+```
+ln -s linux-5.0-rc1 linux
 ./startvm
 ```
 
-Create soft link with the target Linux kernel, enter `root` and empty password to log in, and then
+Create soft link with the target Linux kernel in case you have multiple Linux kernel versions, enter `root` and empty password to login, and then
 
 ```
 useradd -m -s /bin/bash drill
@@ -65,11 +66,11 @@ cp .ssh/authorized_keys /home/drill/.ssh/authorized_keys
 chown drill:drill /home/drill/.ssh /home/drill/.ssh/authorized_keys
 ```
 
-3. Copy exploits and scripts into QEMU VM at Terminal 2
+5. Copy exploits and scripts into QEMU VM at Terminal 2
 
 ```
-make
-./scptovm prep_usr
+./scptovm drill_mod.ko
+./scptovm prep_usr prep_trace
 ./scptovm drill_operations drill_trigger_crash drill_exploit_uaf drill_exploit_nullderef 
 ```
 
@@ -77,6 +78,7 @@ make
 
 ```
 mv /home/drill/prep_usr .
+mv /home/drill/drill_mod.ko .
 ./prep_usr
 ```
 
